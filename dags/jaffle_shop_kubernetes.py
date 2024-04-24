@@ -12,7 +12,7 @@ https://astronomer.github.io/astronomer-cosmos/getting_started/kubernetes.html#k
 from pathlib import Path
 
 from airflow import DAG
-from airflow.providers.cncf.kubernetes.secret import Secret
+# from airflow.providers.cncf.kubernetes.secret import Secret
 from pendulum import datetime
 
 from cosmos import (
@@ -20,56 +20,42 @@ from cosmos import (
     ProfileConfig,
     ExecutionConfig,
     ExecutionMode,
-    DbtSeedKubernetesOperator,
+    # DbtSeedKubernetesOperator,
     DbtTaskGroup,
 )
-from cosmos.profiles import PostgresUserPasswordProfileMapping
-
+from cosmos.profiles import RedshiftUserPasswordProfileMapping
+from airflow.operators.empty import EmptyOperator
 
 PROJECT_DIR = Path("dags/dbt/jaffle_shop/")
-DBT_IMAGE = "dbt-jaffle-shop:1.0.0"
+DBT_IMAGE = "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop:1.0.0"
 
 project_seeds = [
     {"project": "jaffle_shop", "seeds": ["raw_customers", "raw_payments", "raw_orders"]}
 ]
 
-postgres_password_secret = Secret(
-    deploy_type="env",
-    deploy_target="POSTGRES_PASSWORD",
-    secret="postgres-secrets",
-    key="password",
-)
-
-postgres_host_secret = Secret(
-    deploy_type="env",
-    deploy_target="POSTGRES_HOST",
-    secret="postgres-secrets",
-    key="host",
-)
-
 with DAG(
-    dag_id="jaffle_shop_kubernetes",
+    dag_id="jaffle_shop_kubernetes_redshift",
     start_date=datetime(2022, 11, 27),
     doc_md=__doc__,
     catchup=False,
 ) as dag:
-    load_seeds = DbtSeedKubernetesOperator(
-        task_id="load_seeds",
-        project_dir=PROJECT_DIR,
-        get_logs=True,
-        schema="public",
-        conn_id="postgres_default",
-        image=DBT_IMAGE,
-        is_delete_operator_pod=False,
-        secrets=[postgres_password_secret, postgres_host_secret],
-    )
+    # load_seeds = DbtSeedKubernetesOperator(
+    #     task_id="load_seeds",
+    #     project_dir=PROJECT_DIR,
+    #     get_logs=True,
+    #     schema="public",
+    #     conn_id="postgres_default",
+    #     image=DBT_IMAGE,
+    #     is_delete_operator_pod=False,
+    #     secrets=[postgres_password_secret, postgres_host_secret],
+    # )
 
     run_models = DbtTaskGroup(
         profile_config=ProfileConfig(
-            profile_name="postgres_profile",
+            profile_name="redshift_profile",
             target_name="dev",
-            profile_mapping=PostgresUserPasswordProfileMapping(
-                conn_id="postgres_default",
+            profile_mapping=RedshiftUserPasswordProfileMapping(
+                conn_id="redshift_default",
                 profile_args={
                     "schema": "public",
                 },
@@ -83,8 +69,16 @@ with DAG(
             "image": DBT_IMAGE,
             "get_logs": True,
             "is_delete_operator_pod": False,
-            "secrets": [postgres_password_secret, postgres_host_secret],
+             "env_vars": {"TARGT": "prod_password",
+                         "HOST": '', 
+                         "PORT": '',
+                         "USER": '',
+                         "PASSWORD": '',
+                         "DATABASE": '',
+                         "SCHEMA": '',
+                        },
         },
     )
-
-    load_seeds >> run_models
+    e1 = EmptyOperator(task_id="pre_dbt")
+    e2 = EmptyOperator(task_id="post_dbt")
+    e1 >> run_models >> e2

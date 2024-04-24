@@ -1,0 +1,9 @@
+FROM python:3.11
+
+RUN pip install dbt-redshift
+
+RUN mkdir /root/.dbt
+COPY example_redshift_profile.yml /root/.dbt/profiles.yml
+
+COPY dags dags
+COPY redshift_profile_dbt_project.yml dags/dbt/jaffle_shop/dbt_project.yml
