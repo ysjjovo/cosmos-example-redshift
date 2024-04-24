@@ -69,14 +69,15 @@ with DAG(
             "image": DBT_IMAGE,
             "get_logs": True,
             "is_delete_operator_pod": False,
-             "env_vars": {"TARGT": "prod_password",
-                         "HOST": '', 
-                         "PORT": '',
-                         "USER": '',
-                         "PASSWORD": '',
-                         "DATABASE": '',
-                         "SCHEMA": '',
-                        },
+            "env_vars": {
+                "TARGT": "dev",
+                "HOST": 'lin-test.139260835254.us-east-2.redshift-serverless.amazonaws.com', 
+                "PORT": '5439',
+                "USER": 'admin',
+                "PASSWORD": '',
+                "DATABASE": 'dev',
+                "SCHEMA": 'public',
+            },
         },
     )
     e1 = EmptyOperator(task_id="pre_dbt")
