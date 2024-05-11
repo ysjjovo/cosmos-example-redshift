@@ -1,5 +1,5 @@
 FROM python:3.9-slim
-
+ENV AWS_DEFAULT_REGION "us-east-2"
 # 安装所需依赖
 RUN apt-get update
 
