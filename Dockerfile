@@ -1,6 +1,16 @@
-FROM quay.io/astronomer/astro-runtime:10.0.0
+FROM python:3.9-slim
 
-WORKDIR /usr/local/airflow
-COPY dbt-requirements.txt ./
-RUN python -m virtualenv dbt_venv && source dbt_venv/bin/activate && \
-    pip install --no-cache-dir -r dbt-requirements.txt && deactivate
+# 安装所需依赖
+RUN apt-get update
+
+# 设置工作目录
+WORKDIR /app
+
+COPY ./requirements.txt /app
+
+RUN pip install -U pip \
+    && pip --no-cache-dir install -r ./requirements.txt
+
+COPY dags dags
+
+RUN dbt deps

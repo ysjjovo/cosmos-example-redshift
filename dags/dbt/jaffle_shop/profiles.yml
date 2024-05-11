@@ -1,0 +1,11 @@
+redshift_profile:
+  outputs:
+    dev:
+      dbname: '{{ env_var(''DATABASE'') }}'
+      host: '{{ env_var(''HOST'') }}'
+      pass: '{{ env_var(''PASSWORD'') }}'
+      port: '{{ env_var(''PORT'') | as_number }}'
+      schema: '{{ env_var(''SCHEMA'') }}'
+      type: postgres
+      user: '{{ env_var(''USER'') }}'
+  target: '{{ env_var(''TARGT'') }}'
