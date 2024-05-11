@@ -1,0 +1,6 @@
+#--constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.1/constraints-3.10.txt"
+#kubernetes==23.6.0
+#apache-airflow[cncf.kubernetes]
+airflow-dbt-python[redshift,s3]
+astronomer-cosmos[dbt-redshift,kubernetes]==0.7.3
+apache-airflow-providers-cncf-kubernetes==7.2.0

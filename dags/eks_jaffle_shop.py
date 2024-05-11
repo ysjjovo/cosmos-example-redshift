@@ -7,8 +7,8 @@ from pathlib import Path
 from airflow.decorators import dag
 from airflow.operators.empty import EmptyOperator
 
-from cosmos.providers.dbt import DbtTaskGroup
-
+from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig, ExecutionMode
+from cosmos.profiles import RedshiftUserPasswordProfileMapping
 
 @dag(
     schedule_interval="@daily",
@@ -20,13 +20,23 @@ def cosmos_example() -> None:
     pre_dbt = EmptyOperator(task_id="pre_dbt")
 
 
-    _project_dir= "/usr/local/airflow/dags/dbt/"
+    _project_dir= "/usr/local/airflow/dags/dbt/jaffle_shop"
 
     redshift_dbt_group = DbtTaskGroup(
-        dbt_root_path=_project_dir,
-        dbt_project_name="jaffle_shop",
-        execution_mode="kubernetes",
-        conn_id="redshift-default",
+        profile_config=ProfileConfig(
+            profile_name="redshift_profile",
+            target_name="dev",
+            profile_mapping=RedshiftUserPasswordProfileMapping(
+                conn_id="redshift_default",
+                profile_args={
+                    "schema": "public",
+                },
+            ),
+        ),
+        project_config=ProjectConfig(_project_dir),
+        execution_config=ExecutionConfig(
+            execution_mode=ExecutionMode.KUBERNETES,
+        ),
         operator_args={
             "do_xcom_push": False,
             "project_dir":"/app",
@@ -56,4 +66,4 @@ def cosmos_example() -> None:
 
 
 
-basic_eks_cosmos_task_group()
+cosmos_example()
