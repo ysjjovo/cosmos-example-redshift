@@ -1,4 +1,4 @@
-demo_redshift_tpch:
+dbtcicd:
   target: '{{ env_var(''TARGT'') }}'
   outputs:
     dev:

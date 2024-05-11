@@ -20,14 +20,14 @@ def basic_eks_cosmos_task_group() -> None:
     pre_dbt = EmptyOperator(task_id="pre_dbt")
 
 
-    _project_dir= "/usr/local/airflow/dags/dbt/dbtcicd"
+    _project_dir= "/usr/local/airflow/dags/dbt/"
 
     redshift_dbt_group = DbtTaskGroup(
-        profile_args = {
-            "schema": "public",
-        },
-        profile_name_override = 'demo_redshift_tpch',
-        target_name_override = 'dev',
+        # profile_args = {
+        #     "schema": "public",
+        # },
+        # profile_name_override = 'demo_redshift_tpch',
+        # target_name_override = 'dev',
 
         dbt_root_path=_project_dir,
         dbt_project_name="dbtcicd",
@@ -36,7 +36,7 @@ def basic_eks_cosmos_task_group() -> None:
         operator_args={
             "do_xcom_push": False,
             "project_dir":"/app",
-            "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:2.0",
+            "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:2.1",
             "get_logs": True,
             "is_delete_operator_pod": True,
             "name": "mwaa-cosmos-pod-dbt",

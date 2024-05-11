@@ -22,9 +22,9 @@ def cosmos_example() -> None:
     _project_dir= "/usr/local/airflow/dags/dbt/"
 
     redshift_dbt_group = DbtTaskGroup(
-        profile_args = {
-            "schema": "public",
-        },
+        # profile_args = {
+        #     "schema": "public",
+        # },
         profile_name_override = 'redshift_profile',
         target_name_override = 'dev',
 
