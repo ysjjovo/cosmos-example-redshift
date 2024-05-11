@@ -11,6 +11,6 @@ COPY ./requirements.txt /app
 RUN pip install -U pip \
     && pip --no-cache-dir install -r ./requirements.txt
 
-COPY dags/dbt/jaffle_shop .
+COPY . .
 
 RUN dbt deps
