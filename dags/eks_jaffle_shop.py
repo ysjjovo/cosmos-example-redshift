@@ -15,7 +15,7 @@ from cosmos.providers.dbt import DbtTaskGroup
     start_date=datetime(2023, 7, 24),
     catchup=False,
 )
-def basic_eks_cosmos_task_group() -> None:
+def cosmos_example() -> None:
    
     pre_dbt = EmptyOperator(task_id="pre_dbt")
 
@@ -24,13 +24,13 @@ def basic_eks_cosmos_task_group() -> None:
 
     redshift_dbt_group = DbtTaskGroup(
         dbt_root_path=_project_dir,
-        dbt_project_name="dbtcicd",
+        dbt_project_name="jaffle_shop",
         execution_mode="kubernetes",
         conn_id="redshift-default",
         operator_args={
             "do_xcom_push": False,
             "project_dir":"/app",
-            "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:2.0",
+            "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:1.0.0",
             "get_logs": True,
             "is_delete_operator_pod": True,
             "name": "mwaa-cosmos-pod-dbt",
