@@ -6,6 +6,6 @@ redshift_profile:
       pass: '{{ env_var(''PASSWORD'') }}'
       port: '{{ env_var(''PORT'') | as_number }}'
       schema: '{{ env_var(''SCHEMA'') }}'
-      type: postgres
+      type: redshift
       user: '{{ env_var(''USER'') }}'
   target: '{{ env_var(''TARGT'') }}'

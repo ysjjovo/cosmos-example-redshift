@@ -29,8 +29,7 @@ def basic_eks_cosmos_task_group() -> None:
         conn_id="redshift-default",
         operator_args={
             "do_xcom_push": False,
-            "project_dir":"/app/dags/dbt/jaffle_shop/",
-            "namespace":"prod-bigdata-dw-mwaa",
+            "project_dir":"/app",
             "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:1.0.0",
             "get_logs": True,
             "is_delete_operator_pod": True,
