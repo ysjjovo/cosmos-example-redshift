@@ -1,4 +1,5 @@
 redshift_profile:
+  target: dev
   outputs:
     dev:
       dbname: '{{ env_var(''DATABASE'') }}'
@@ -8,4 +9,3 @@ redshift_profile:
       schema: '{{ env_var(''SCHEMA'') }}'
       type: redshift
       user: '{{ env_var(''USER'') }}'
-  target: '{{ env_var(''TARGT'') }}'

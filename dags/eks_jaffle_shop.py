@@ -7,8 +7,7 @@ from pathlib import Path
 from airflow.decorators import dag
 from airflow.operators.empty import EmptyOperator
 
-from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig, ExecutionMode
-from cosmos.profiles import RedshiftUserPasswordProfileMapping
+from cosmos.providers.dbt import DbtTaskGroup
 
 @dag(
     schedule_interval="@daily",
@@ -20,27 +19,24 @@ def cosmos_example() -> None:
     pre_dbt = EmptyOperator(task_id="pre_dbt")
 
 
-    _project_dir= "/usr/local/airflow/dags/dbt/jaffle_shop"
+    _project_dir= "/usr/local/airflow/dags/dbt/"
 
     redshift_dbt_group = DbtTaskGroup(
-        profile_config=ProfileConfig(
-            profile_name="redshift_profile",
-            target_name="dev",
-            profile_mapping=RedshiftUserPasswordProfileMapping(
-                conn_id="redshift_default",
-                profile_args={
-                    "schema": "public",
-                },
-            ),
-        ),
-        project_config=ProjectConfig(_project_dir),
-        execution_config=ExecutionConfig(
-            execution_mode=ExecutionMode.KUBERNETES,
-        ),
+        profile_args = {
+            "schema": "public",
+        },
+        profile_name_override = 'redshift_profile',
+        target_name_override = 'dev',
+
+        dbt_root_path=_project_dir,
+        dbt_project_name="jaffle_shop",
+        execution_mode="kubernetes",
+        conn_id="redshift-default",
+
         operator_args={
             "do_xcom_push": False,
             "project_dir":"/app",
-            "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:1.0.0",
+            "image": "139260835254.dkr.ecr.us-east-2.amazonaws.com/dbt-jaffle-shop-redshift:1.0.1",
             "get_logs": True,
             "is_delete_operator_pod": True,
             "name": "mwaa-cosmos-pod-dbt",

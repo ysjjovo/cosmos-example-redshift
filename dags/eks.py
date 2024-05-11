@@ -20,9 +20,15 @@ def basic_eks_cosmos_task_group() -> None:
     pre_dbt = EmptyOperator(task_id="pre_dbt")
 
 
-    _project_dir= "/usr/local/airflow/dags/dbt/"
+    _project_dir= "/usr/local/airflow/dags/dbt/dbtcicd"
 
     redshift_dbt_group = DbtTaskGroup(
+        profile_args = {
+            "schema": "public",
+        },
+        profile_name_override = 'demo_redshift_tpch',
+        target_name_override = 'dev',
+
         dbt_root_path=_project_dir,
         dbt_project_name="dbtcicd",
         execution_mode="kubernetes",
