@@ -39,7 +39,7 @@ def basic_eks_cosmos_task_group() -> None:
             "vars": '{"my_car": "val1"}',
             "env_vars": {
                 "TARGT": "dev",
-                "HOST": 'lin.cxylowtpy724.us-east-2.redshift.amazonaws.com', 
+                "HOST": 'lin-test.139260835254.us-east-2.redshift-serverless.amazonaws.com', 
                 "PORT": '5439',
                 "USER": 'admin',
                 "PASSWORD": '',
